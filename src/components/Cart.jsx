@@ -21,7 +21,6 @@ const Cart = ({
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
   const [isProcessingCheckout, setIsProcessingCheckout] = useState(false);
 
-  // Calculate total using Firebase cart structure (totalPayable field)
   const totalPrice = cart.reduce(
     (total, item) =>
       total + (item.totalPayable || item.unitPrice * item.quantity),

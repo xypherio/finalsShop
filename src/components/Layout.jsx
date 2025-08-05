@@ -60,7 +60,7 @@ const Layout = ({ children, cartItemCount = 0 }) => {
               to="/cart"
               className={location.pathname === "/cart" ? "active" : ""}
             >
-              CART ({cartItemCount})
+              CART
             </Nav.Link>
             <Button className="add-btn" size="md" onClick={handleAddProduct}>
               Add Product
