@@ -7,11 +7,7 @@ import { useState } from "react";
 const Layout = ({ children, cartItemCount = 0 }) => {
   const location = useLocation();
 
-  const {
-    addProduct,
-    updateProduct,
-    fetchProducts
-  } = useProducts();
+  const { addProduct, updateProduct, fetchProducts } = useProducts();
   const [showProductModal, setShowProductModal] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
 
@@ -26,7 +22,7 @@ const Layout = ({ children, cartItemCount = 0 }) => {
         await updateProduct(editingProduct.id, productData);
       } else {
         await addProduct(productData);
-      }// Refresh product list
+      } // Refresh product list
       setShowProductModal(false);
       setEditingProduct(null);
     } catch (error) {
@@ -34,11 +30,10 @@ const Layout = ({ children, cartItemCount = 0 }) => {
     }
   };
 
-    const handleCloseModal = () => {
+  const handleCloseModal = () => {
     setShowProductModal(false);
     setEditingProduct(null);
   };
-
 
   return (
     <div className="App">
@@ -71,7 +66,6 @@ const Layout = ({ children, cartItemCount = 0 }) => {
 
       <Container>{children}</Container>
 
-      
       <ProductModal
         show={showProductModal}
         onHide={handleCloseModal}

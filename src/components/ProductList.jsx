@@ -1,5 +1,5 @@
 import { Row, Col, Card, Button, Spinner, Badge } from "react-bootstrap";
-import { isOutOfStock, hasStock } from "../services/cartService";
+import { isOutOfStock } from '../services/productService';
 
 const ProductList = ({
   products,
