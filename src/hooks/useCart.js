@@ -1,7 +1,6 @@
 import { useReducer, useEffect } from 'react';
 import * as firebaseCartService from '../services/firebaseCartService';
 import * as productService from '../services/productService';
-import * as cartService from '../services/cartService';
 import { cartReducer, initialCartState, cartActions } from '../reducers/cartReducer';
 
 export const useCart = () => {
@@ -27,7 +26,7 @@ export const useCart = () => {
       dispatch(cartActions.clearError());
       
       // Check if product has sufficient stock
-      if (cartService.isOutOfStock(product)) {
+      if (productService.isOutOfStock(product)) {
         dispatch(cartActions.setError('This product is out of stock!'));
         return;
       }
@@ -47,10 +46,6 @@ export const useCart = () => {
         await firebaseCartService.addToFirebaseCart(product, quantity);
       }
 
-      // Update product stock
-      const newStockCount = product.stocksLeft - 1;
-      await productService.updateProductStock(product.id, newStockCount);
-
       // Reload cart to sync with Firebase
       await loadCartFromFirebase();
     } catch (error) {
@@ -59,21 +54,23 @@ export const useCart = () => {
     }
   };
 
-  const removeFromCart = async (cartItemId) => {
-    try {
-      dispatch(cartActions.clearError());
-      dispatch(cartActions.setLoading(true));
+const removeFromCart = async (cartItemId) => {
+  try {
+    dispatch(cartActions.clearError());
+    dispatch(cartActions.setLoading(true));
 
-      // Remove from Firebase
-      await firebaseCartService.removeFromFirebaseCart(cartItemId);
-      
-      // Reload cart to sync with Firebase
-      await loadCartFromFirebase();
-    } catch (error) {
-      console.error('Error removing from cart:', error);
-      dispatch(cartActions.setError('Error removing item from cart. Please try again.'));
-    }
-  };
+    // Remove the item from Firebase cart
+    await firebaseCartService.removeFromFirebaseCart(cartItemId);
+
+    // Reload cart to sync
+    await loadCartFromFirebase();
+
+  } catch (error) {
+    console.error('Error removing from cart:', error);
+    dispatch(cartActions.setError('Error removing item from cart. Please try again.'));
+  }
+};
+
 
   const updateQuantity = async (cartItemId, quantity, unitPrice) => {
     try {
@@ -110,7 +107,7 @@ export const useCart = () => {
     }
   };
 
-  const checkout = async (customerInfo = {}) => {
+  const checkout = async (product) => {
     try {
       dispatch(cartActions.clearError());
       
@@ -125,11 +122,11 @@ export const useCart = () => {
         items: state.items,
         totalAmount: state.totalPrice,
         totalItems: state.totalItems,
-        customerInfo
       };
 
+
       const order = await firebaseCartService.processCheckout(checkoutData);
-      dispatch(cartActions.clearCart()); // Clear cart after successful checkout
+      dispatch(cartActions.clearCart());
       
       return order;
     } catch (error) {
